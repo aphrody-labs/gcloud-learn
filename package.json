@@ -1,0 +1,19 @@
+{
+  "name": "gcloud-learn",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Unified Google Cloud, Vertex AI, Open Source & Certifications Architecture on Upstream Bun",
+  "scripts": {
+    "start": "bun run api/server.ts",
+    "dev": "bun --watch run api/server.ts",
+    "cli": "bun run cli/main.ts",
+    "check": "bun check",
+    "lint": "bun lint",
+    "fmt": "bun fmt",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="fr" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Cloud & Open Source Learning Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --md-sys-color-primary: #8ab4f8;
+        --md-sys-color-on-primary: #003062;
+        --md-sys-color-primary-container: #00468b;
+        --md-sys-color-background: #121316;
+        --md-sys-color-on-background: #e2e2e6;
+        --md-sys-color-surface: #1e1f23;
+        --md-sys-color-surface-variant: #2b2c31;
+        --md-sys-color-outline: #8c9099;
+        --md-sys-color-secondary: #c2c7cf;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          "Google Sans",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background-color: var(--md-sys-color-background);
+        color: var(--md-sys-color-on-background);
+        line-height: 1.6;
+        padding: 2rem;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--md-sys-color-surface-variant);
+        margin-bottom: 2rem;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .brand-logo {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+        border-radius: 8px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-primary);
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .card {
+        background: var(--md-sys-color-surface);
+        border: 1px solid var(--md-sys-color-surface-variant);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition:
+          transform 0.2s,
+          border-color 0.2s;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        border-color: var(--md-sys-color-primary);
+      }
+
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        color: var(--md-sys-color-primary);
+      }
+
+      .card-desc {
+        font-size: 0.95rem;
+        color: var(--md-sys-color-secondary);
+        margin-bottom: 1.25rem;
+      }
+
+      ul.links {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      ul.links a {
+        color: var(--md-sys-color-on-background);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 0.75rem;
+        background: var(--md-sys-color-surface-variant);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        transition: background 0.2s;
+      }
+
+      ul.links a:hover {
+        background: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-primary);
+      }
+
+      .console-box {
+        background: #000;
+        border: 1px solid var(--md-sys-color-surface-variant);
+        border-radius: 12px;
+        padding: 1.25rem;
+        font-family: "Roboto Mono", monospace;
+        font-size: 0.85rem;
+        color: #76ea8f;
+        overflow-x: auto;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        background: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <div class="brand-logo"></div>
+        <div>
+          <h1>GCloud Learn & Ecosystem Portal</h1>
+          <span class="badge">Upstream Bun v1.4.4+ Native Runtime</span>
+        </div>
+      </div>
+      <div>
+        <a href="/api/health" class="btn">API Health</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">Certifications Google Cloud</div>
+        <div class="card-desc">
+          Parcours d'entraînement intensif, simulations orales et vidéo en
+          anglais technique.
+        </div>
+        <ul class="links">
+          <a href="/curriculum/associate-cloud-engineer"
+            ><span>Associate Cloud Engineer (ACE)</span><span>→</span></a
+          >
+          <a href="/curriculum/professional-cloud-architect"
+            ><span>Professional Cloud Architect (PCA)</span><span>→</span></a
+          >
+          <a href="/curriculum/professional-data-engineer"
+            ><span>Professional Data Engineer (PDE)</span><span>→</span></a
+          >
+          <a href="/curriculum/generative-ai-leader"
+            ><span>Generative AI Leader</span><span>→</span></a
+          >
+          <a href="/curriculum/technical-english"
+            ><span>Technical English for Oral Exams</span><span>→</span></a
+          >
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Google Open Source Contributions</div>
+        <div class="card-desc">
+          Protocoles Gerrit/Git et guides d'ingénierie pour les projets majeurs
+          de Google.
+        </div>
+        <ul class="links">
+          <a href="/oss/chromium"
+            ><span>Chromium Engine & V8</span><span>→</span></a
+          >
+          <a href="/oss/flutter"
+            ><span>Flutter & Dart Architecture</span><span>→</span></a
+          >
+          <a href="/oss/aosp"
+            ><span>Android Open Source Project</span><span>→</span></a
+          >
+          <a href="/oss/gvisor"
+            ><span>gVisor Sandboxed Container</span><span>→</span></a
+          >
+          <a href="/oss/protocol"
+            ><span>Gerrit & Multi-Repo Guidelines</span><span>→</span></a
+          >
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Google Developer Programs</div>
+        <div class="card-desc">
+          Parcours officiels, accréditations et certifications communautaires.
+        </div>
+        <ul class="links">
+          <a href="/programs/innovators"
+            ><span>Google Cloud Innovators (Champion)</span><span>→</span></a
+          >
+          <a href="/programs/skills-boost"
+            ><span>Google Cloud Skills Boost Quests</span><span>→</span></a
+          >
+          <a href="/programs/gdg"
+            ><span>Google Developer Groups & Chapters</span><span>→</span></a
+          >
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Automatisations & FinOps</div>
+        <div class="card-desc">
+          Contrôle strict des dépenses multi-services et orchestrateur headless.
+        </div>
+        <ul class="links">
+          <a href="/automations/finops"
+            ><span>GCP, Ads, Workspace Billing Guard</span><span>→</span></a
+          >
+          <a href="/automations/browser-studio"
+            ><span>Vertex & AI Studio Headless Engine</span><span>→</span></a
+          >
+          <a href="/templates/showcase"
+            ><span>Production Ready Templates</span><span>→</span></a
+          >
+        </ul>
+      </div>
+    </div>
+
+    <section class="card">
+      <div class="card-title">Système d'Exécution & Télémétrie Native</div>
+      <div class="console-box" id="sys-telemetry">
+        [Runtime] Upstream Bun v1.4.4+ (Full Rust + JSC)<br />
+        [Backend] Bun.serve + bun:sqlite + Native GoogleApiClient<br />
+        [Mode] Autonomous NHITL Execution Engine Active
+      </div>
+    </section>
+
+    <script type="module" src="/web/app.js"></script>
+  </body>
+</html>
