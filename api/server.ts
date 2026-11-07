@@ -1,144 +1,92 @@
-/**
- * Fullstack Native Server using Upstream Bun v1.4.4+ Native APIs
- * - Bun.serve() with typed routes
- * - bun:sqlite for local caching & telemetry
- * - GoogleApiClient native integration
- * - FirebaseBunFork persistence
- */
-
-import { Database } from "bun:sqlite";
+// SPDX-License-Identifier: MIT OR Apache-2.0
+import { serve } from "bun";
 import { GoogleApiClient } from "../vendor/google-api-client.ts";
 import { FirebaseBunFork } from "../vendor/firebase-bun-fork.ts";
+import { ServerlessRAGDatabase } from "./rag-database.ts";
+import { LarryPageMentorEngine } from "./larry-soul-mentor.ts";
 
-const PORT = Number(process.env.PORT) || 8080;
-const HOST = process.env.HOST || "0.0.0.0";
-
-const db = new Database("gcloud_learn.sqlite");
-db.run("PRAGMA journal_mode = WAL;");
-db.run(`
-  CREATE TABLE IF NOT EXISTS requests_log (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    path TEXT NOT NULL,
-    method TEXT NOT NULL,
-    timestamp INTEGER NOT NULL
-  );
-`);
+const PORT = Number(process.env.PORT || 8080);
+const HOST = "0.0.0.0";
 
 const googleClient = new GoogleApiClient();
 const _firebaseFork = new FirebaseBunFork();
+const ragDb = new ServerlessRAGDatabase();
+const larryMentor = new LarryPageMentorEngine(ragDb);
 
-const server = Bun.serve({
-  port: PORT,
-  hostname: HOST,
-  routes: {
-    "/": async () => {
-      const htmlFile = Bun.file("web/index.html");
-      return new Response(await htmlFile.text(), {
-        headers: { "Content-Type": "text/html; charset=utf-8" },
-      });
-    },
-    "/web/app.js": async () => {
-      const jsFile = Bun.file("web/app.js");
-      return new Response(await jsFile.text(), {
-        headers: { "Content-Type": "application/javascript; charset=utf-8" },
-      });
-    },
-    "/api/health": () => {
-      return Response.json({
-        status: "healthy",
-        runtime: "Upstream Bun v1.4.4+",
-        timestamp: new Date().toISOString(),
-        sqlite: "connected",
-        project: googleClient.getProjectId(),
-      });
-    },
-    "/api/gcp/models": async () => {
-      const models = await googleClient.listVertexAiModels();
-      return Response.json({ models });
-    },
-    "/api/gcp/buckets": async () => {
-      const buckets = await googleClient.listStorageBuckets();
-      return Response.json({ buckets });
-    },
-    "/api/curriculum": async () => {
-      const tracks = [
-        {
-          id: "ace",
-          title: "Associate Cloud Engineer",
-          duration: "4 weeks",
-          focus: [
-            "IAM",
-            "VPC & Subnets",
-            "Compute Engine",
-            "GKE",
-            "Cloud Storage",
-          ],
-        },
-        {
-          id: "pca",
-          title: "Professional Cloud Architect",
-          duration: "6 weeks",
-          focus: [
-            "Enterprise Architecture",
-            "Hybrid Cloud & Interconnect",
-            "High Availability & DR",
-            "Security Posture",
-          ],
-        },
-        {
-          id: "pde",
-          title: "Professional Data Engineer",
-          duration: "6 weeks",
-          focus: [
-            "BigQuery",
-            "Dataflow & Apache Beam",
-            "Dataproc & Spark",
-            "Pub/Sub Streaming",
-            "Bigtable",
-          ],
-        },
-        {
-          id: "genai",
-          title: "Generative AI Leader",
-          duration: "3 weeks",
-          focus: [
-            "Gemini 1.5 Pro/Flash",
-            "Vertex AI Search & Conversation",
-            "Prompt Engineering",
-            "Responsible AI",
-          ],
-        },
-      ];
-      return Response.json({ tracks });
-    },
-  },
-  async fetch(req) {
-    const url = new URL(req.url);
+export function startServer() {
+  return serve({
+    port: PORT,
+    hostname: HOST,
+    async fetch(req) {
+      const url = new URL(req.url);
 
-    // Log request
-    const stmt = db.prepare(
-      "INSERT INTO requests_log (path, method, timestamp) VALUES (?, ?, ?)",
-    );
-    stmt.run(url.pathname, req.method, Date.now());
-
-    if (req.method === "POST" && url.pathname === "/api/generate") {
-      try {
-        const body = (await req.json()) as { prompt: string; model?: string };
-        const result = await googleClient.generateContent({
-          prompt: body.prompt || "Hello Gemini",
-          model: body.model,
+      if (url.pathname === "/health") {
+        const buckets = await googleClient.listStorageBuckets();
+        return Response.json({
+          status: "healthy",
+          runtime: "Upstream Bun v1.4.4+",
+          timestamp: new Date().toISOString(),
+          googleCloudProject: googleClient.getProjectId(),
+          storageBuckets: buckets.length,
+          firestoreCollections: ["candidates", "telemetry", "evaluations"],
+          ragDocuments: ragDb.search("", 100).length
         });
-        return Response.json(result);
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : String(err);
-        return Response.json({ error: message }, { status: 500 });
       }
+
+      if (url.pathname === "/api/rag/search" && req.method === "GET") {
+        const query = url.searchParams.get("q") || "";
+        const results = ragDb.search(query);
+        return Response.json({ query, results });
+      }
+
+      if (url.pathname === "/api/mentor/evaluate" && req.method === "POST") {
+        try {
+          const body = await req.json() as { prompt: string; candidateName?: string; roleTarget?: string };
+          const evalResult = await larryMentor.evaluateCandidateResponse(body.prompt);
+          if (body.candidateName) {
+            ragDb.saveMockInterview(
+              body.candidateName,
+              body.roleTarget || "SWE L5",
+              [{ role: "candidate", text: body.prompt }, { role: "larry", text: evalResult.message }],
+              (evalResult.dimensionScores.gca + evalResult.dimensionScores.rrk + evalResult.dimensionScores.leadership + evalResult.dimensionScores.googliness) / 4,
+              evalResult.verdict
+            );
+          }
+          return Response.json(evalResult);
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : String(e);
+          return Response.json({ error: msg }, { status: 400 });
+        }
+      }
+
+      if (url.pathname === "/api/mentor/interviews" && req.method === "GET") {
+        return Response.json({ interviews: ragDb.getMockInterviews() });
+      }
+
+      if (url.pathname === "/api/firebase/export" && req.method === "GET") {
+        return Response.json(ragDb.exportFirebaseFormat());
+      }
+
+      if (url.pathname === "/api/info") {
+        return Response.json({
+          title: "Google Cloud Learn & Sovereign Engineering Portal",
+          mission: "Prepare engineers for Google Cloud Paris (Rue de Londres) & Master Upstream Bun Stack",
+          modules: [
+            "gcp-certifications",
+            "google-oss-contributions",
+            "finops-automations",
+            "serverless-rag-database",
+            "larry-page-mentor-soul"
+          ]
+        });
+      }
+
+      return new Response("Not Found", { status: 404 });
     }
+  });
+}
 
-    return new Response("Not Found", { status: 404 });
-  },
-});
-
-console.log(
-  `[gcloud-learn] Server listening on http://${server.hostname}:${server.port}`,
-);
+if (import.meta.main) {
+  startServer();
+  console.log(`Server running at http://${HOST}:${PORT}`);
+}
