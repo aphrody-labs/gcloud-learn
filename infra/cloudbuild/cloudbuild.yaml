@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: Apache-2.0
+# Google Cloud Build Pipeline for europe-west9 (Paris) Sovereign Deployment
+steps:
+  - name: "rust:1.85-slim"
+    id: "cargo-test-and-wasm"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - "rustup target add wasm32-unknown-unknown && cargo test --workspace && cargo build --release --target wasm32-unknown-unknown -p gcloud_native_wasm"
+
+  - name: "golang:1.24-alpine"
+    id: "go-cloudrun-ingress"
+    dir: "src/go/cloudrun_ingress"
+    entrypoint: "sh"
+    args:
+      - "-c"
+      - "go test -v ./... && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags='-s -w' -o /workspace/cloudrun-ingress ."
+
+  - name: "oven/bun:1.4"
+    id: "bun-check-and-test"
+    entrypoint: "sh"
+    args:
+      - "-c"
+      - "bun install --frozen-lockfile && bun check && bun lint && bun test"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: "E2_HIGHCPU_8"

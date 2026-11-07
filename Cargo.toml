@@ -1,0 +1,13 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/gcloud_core_simd",
+    "crates/gcloud_native_wasm",
+]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

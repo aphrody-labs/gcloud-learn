@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: Apache-2.0
+# Knative / Google Cloud Run Gen2 Service Manifest (europe-west9 Paris + gVisor Sandbox)
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: gcloud-learn-paris
+  namespace: aphrody
+  labels:
+    cloud.googleapis.com/location: europe-west9
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/execution-environment: gen2
+        run.googleapis.com/cpu-throttling: "false"
+        autoscaling.knative.dev/minScale: "1"
+        autoscaling.knative.dev/maxScale: "25"
+    spec:
+      containerConcurrency: 250
+      timeoutSeconds: 60
+      containers:
+        - name: cloudrun-go-ingress
+          image: europe-west9-docker.pkg.dev/aphrody/gcloud-learn/ingress:latest
+          ports:
+            - name: h2c
+              containerPort: 8080
+          env:
+            - name: GOOGLE_CLOUD_PROJECT
+              value: "aphrody"
+            - name: GOOGLE_CLOUD_REGION
+              value: "europe-west9"
+          resources:
+            limits:
+              cpu: "2000m"
+              memory: "1Gi"

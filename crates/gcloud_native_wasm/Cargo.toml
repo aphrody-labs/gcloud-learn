@@ -1,0 +1,11 @@
+[package]
+name = "gcloud_native_wasm"
+version = "2026.11.0"
+edition = "2024"
+license = "Apache-2.0"
+description = "WebAssembly & Edge Compute Kernel for Google Cloud 3D Game & Stargardt Assistive Shader"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
