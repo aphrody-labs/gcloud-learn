@@ -1,0 +1,11 @@
+[package]
+name = "gcloud_core_simd"
+version = "2026.11.0"
+edition = "2024"
+license = "Apache-2.0"
+description = "Native SIMD Kernel for Google Cloud Vector Search & Embeddings"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]

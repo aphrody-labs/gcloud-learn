@@ -1,19 +1,30 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"],
-    "module": "esnext",
-    "target": "esnext",
+    "target": "ESNext",
+    "module": "ESNext",
     "moduleResolution": "bundler",
-    "moduleDetection": "force",
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
+    "lib": ["ESNext", "DOM"],
+    "types": ["bun"],
     "strict": true,
     "skipLibCheck": true,
-    "jsx": "react-jsx",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "allowJs": true,
-    "types": ["bun"]
+    "paths": {
+      "@gcloud-learn/core": ["./packages/core/src/index.ts"],
+      "@gcloud-learn/rag": ["./packages/rag/src/index.ts"],
+      "@gcloud-learn/larry-soul": ["./packages/larry-soul/src/index.ts"],
+      "@gcloud-learn/finops": ["./packages/finops/src/index.ts"],
+      "@gcloud-learn/seo-llms": ["./packages/seo-llms/src/index.ts"],
+      "@gcloud-learn/browser-studio": ["./packages/browser-studio/src/index.ts"]
+    }
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.json"]
+  "include": [
+    "apps/**/*.ts",
+    "packages/**/*.ts",
+    "plugins/**/*.ts",
+    "tests/**/*.ts"
+  ]
 }

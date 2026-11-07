@@ -1,19 +1,25 @@
 {
-  "name": "gcloud-learn",
-  "version": "1.0.0",
+  "name": "gcloud-learn-monorepo",
+  "version": "2026.11.0",
   "private": true,
-  "type": "module",
-  "description": "Unified Google Cloud, Vertex AI, Open Source & Certifications Architecture on Upstream Bun",
+  "description": "Google Cloud & Sovereign Engineering Monorepo (Upstream Bun, Pure TS, WebGPU 3D, Chromium/AOSP Tree)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "start": "bun run api/server.ts",
-    "dev": "bun --watch run api/server.ts",
-    "cli": "bun run cli/main.ts",
+    "dev": "bun run --cwd apps/api dev",
+    "build": "bun run --cwd apps/api build",
     "check": "bun check",
     "lint": "bun lint",
+    "test": "bun test",
     "fmt": "bun fmt",
-    "test": "bun test"
+    "fmt:check": "bun fmt --check"
   },
+  "trustedDependencies": [
+    "@types/bun"
+  ],
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "^1.2.4"
   }
 }
